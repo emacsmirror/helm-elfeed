@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: 
 ;; Version: 0
-;; Last modified: 2025-04-03 Thu 08:48:24
+;; Last modified: 2025-04-03 Thu 08:54:51
 ;; Package-Requires: ((helm "3.9.6") (elfeed "3.4.2"))
 ;; Keywords: helm elfeed
 
@@ -197,7 +197,7 @@ actions used in `helm-elfeed'.")
         :truncate-lines helm-buffers-truncate-lines
         ))
 
-(provide 'helm-khard)
+(provide 'helm-elfeed)
 
 
 ;; Local Variables:
