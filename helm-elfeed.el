@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: 
 ;; Version: 0
-;; Last modified: 2025-04-03 Thu 08:54:51
+;; Last modified: 2025-04-07 Mon 19:17:02
 ;; Package-Requires: ((helm "3.9.6") (elfeed "3.4.2"))
 ;; Keywords: helm elfeed
 
@@ -96,7 +96,7 @@
 			for feed-format = (concat
                          (if (member feed-url unread-feeds)
                              (propertize feed-title
-                                         'face 'elfeed-summary-count-face-unread)
+                                         'face 'font-lock-keyword-face)
                            feed-title)
                          " " feed-url-format
                          " " feed-tags-format
