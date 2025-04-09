@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: 
 ;; Version: 0
-;; Last modified: 2025-04-07 Mon 19:17:02
+;; Last modified: 2025-04-09 Wed 22:37:44
 ;; Package-Requires: ((helm "3.9.6") (elfeed "3.4.2"))
 ;; Keywords: helm elfeed
 
@@ -49,6 +49,21 @@
 	:type '(cons string sting)
   :group 'helm-elfeed)
 
+(defface helm-elfeed-unread-face
+  '((t :inherit font-lock-keyword-face))
+  "Font face for the title of an unread entity."
+  :group 'helm-elfeed)
+
+(defface helm-elfeed-url-face
+  '((t :inherit font-lock-comment-face))
+  "Font face for the url part."
+  :group 'helm-elfeed)
+
+(defface helm-elfeed-tags-face
+  '((t :inherit font-lock-comment-face))
+  "Font face for the tags of an entity."
+  :group 'helm-elfeed)
+
 (defun he--trim-or-fill (field-value column-length)
   "Trim or fill a FIELD-VALUE to a specified COLUMN-LENGTH."
   (if (> (length field-value) (- column-length 2))
@@ -88,15 +103,15 @@
 																										(- (window-width)
                                                        (length feed-title)
                                                        tags-width)))
-                             'face 'font-lock-comment-face)
+                             'face 'helm-elfeed-url-face)
 			for feed-tags-format = (propertize
 															(format "(%s)"
 																			(string-join (mapcar 'symbol-name feed-tags) ","))
-															'face 'font-lock-comment-face)
+															'face 'helm-elfeed-tags-face)
 			for feed-format = (concat
                          (if (member feed-url unread-feeds)
                              (propertize feed-title
-                                         'face 'font-lock-keyword-face)
+                                         'face 'helm-elfeed-unread-face)
                            feed-title)
                          " " feed-url-format
                          " " feed-tags-format
