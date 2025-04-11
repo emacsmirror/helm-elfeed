@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: 
 ;; Version: 0
-;; Last modified: 2025-04-09 Wed 22:37:44
+;; Last modified: 2025-04-11 Fri 22:17:05
 ;; Package-Requires: ((helm "3.9.6") (elfeed "3.4.2"))
 ;; Keywords: helm elfeed
 
@@ -149,7 +149,8 @@
 
 (defvar helm-elfeed--actions
   (helm-make-actions
-   "Show feed" #'helm-elfeed-update-filter-action
+   "Show feed" #'helm-elfeed-show-feed-action
+   "Show complete feed" #'helm-elfeed-show-complete-feed-action
    "Mark feed as read" #'helm-elfeed-mark-feed-as-read-action
    "Update feed" #'helm-elfeed-update-feed-action
    "Update all feeds" #'helm-elfeed-update-action
@@ -157,13 +158,27 @@
   "List of pairs (STRING FUNCTIONSYMBOL), which represent the
 actions used in `helm-elfeed'.")
 
-(defun helm-elfeed-update-filter-action (candidate)
+(defun helm-elfeed-show-feed-action (candidate)
   "Update the Elfeed filter using the query of CANDIDATE."
   (let ((search-query (cl-loop
                        for candidate in (helm-marked-candidates)
                        collect (plist-get (car candidate) :query)
                        into collected-strings
                        finally (return (string-join collected-strings " "))
+                       )))
+    (elfeed-search-set-filter search-query)
+    (switch-to-buffer "*elfeed-search*")))
+
+(defun helm-elfeed-show-complete-feed-action (candidate)
+  "Update the Elfeed filter using the query of CANDIDATE."
+  (let ((search-query (cl-loop
+                       for candidate in (helm-marked-candidates)
+                       collect (plist-get (car candidate) :query)
+                       into collected-strings
+                       finally (return (replace-regexp-in-string
+                                        "+unread"
+                                        ""
+                                        (string-join collected-strings " ")))
                        )))
     (elfeed-search-set-filter search-query)
     (switch-to-buffer "*elfeed-search*")))
