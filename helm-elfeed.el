@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: 
 ;; Version: 0
-;; Last modified: 2025-04-11 Fri 22:17:05
+;; Last modified: 2025-05-13 Tue 22:01:37
 ;; Package-Requires: ((helm "3.9.6") (elfeed "3.4.2"))
 ;; Keywords: helm elfeed
 
@@ -216,7 +216,7 @@ actions used in `helm-elfeed'.")
   (elfeed-update))
 
 ;;;###autoload
-(defun helm-elfeed ()
+(defun helm-elfeed (&optional input)
   "Switch between Elfeed feeds with Helm."
   (interactive)
   (helm :sources (helm-build-sync-source "Feeds:"
@@ -225,6 +225,7 @@ actions used in `helm-elfeed'.")
                    :action helm-elfeed--actions)
         :buffer "*helm-elfeed*"
         :truncate-lines helm-buffers-truncate-lines
+        :input (or input "")
         ))
 
 (provide 'helm-elfeed)
