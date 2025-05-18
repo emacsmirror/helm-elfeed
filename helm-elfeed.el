@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: 
 ;; Version: 0
-;; Last modified: 2025-05-13 Tue 22:01:37
+;; Last modified: 2025-05-18 Sun 22:11:16
 ;; Package-Requires: ((helm "3.9.6") (elfeed "3.4.2"))
 ;; Keywords: helm elfeed
 
@@ -116,11 +116,12 @@
                          " " feed-url-format
                          " " feed-tags-format
                          )
-			for feed-plist = `(:url ,feed-url
-															:query ,(concat
-                                       "=" (replace-regexp-in-string "\\([?+]\\)" "\\\\\\1"
-                                                                     feed-url)
-                                       (when (member feed-url unread-feeds) " +unread")))
+			for feed-plist = `(:title ,feed-title
+                                :url ,feed-url
+												        :query ,(concat
+                                         "=" (replace-regexp-in-string "\\([?+]\\)" "\\\\\\1"
+                                                                       feed-url)
+                                         (when (member feed-url unread-feeds) " +unread")))
 			if feed-title
 			collect `(,feed-format
 								.
@@ -154,6 +155,7 @@
    "Mark feed as read" #'helm-elfeed-mark-feed-as-read-action
    "Update feed" #'helm-elfeed-update-feed-action
    "Update all feeds" #'helm-elfeed-update-action
+   "Edit feed" #'helm-elfeed-edit-action
    )
   "List of pairs (STRING FUNCTIONSYMBOL), which represent the
 actions used in `helm-elfeed'.")
@@ -214,6 +216,24 @@ actions used in `helm-elfeed'.")
   (elfeed-search-set-filter "@6-months-ago")
   (switch-to-buffer "*elfeed-search*")
   (elfeed-update))
+
+(defun helm-elfeed-edit-action (candidate)
+  "Edit feed in Elfeed database."
+  (let ((feed-title (plist-get (car candidate) :title))
+        (feed-url (plist-get (car candidate) :url))
+        (search-query (plist-get (car candidate) :query))
+        (feed-file (when (boundp 'rmh-elfeed-org-files)
+                     (car rmh-elfeed-org-files))))
+    (if feed-file
+        (progn 
+          (find-file feed-file)
+          ;; Inside Org file
+          (goto-char (point-min))
+          (org-fold-show-all)
+          (search-forward feed-url)
+          (beginning-of-line))
+      (message "elfeed-helm: Could not edit feed due to missing `rmh-elfeed-org-files'.")
+      )))
 
 ;;;###autoload
 (defun helm-elfeed (&optional input)
