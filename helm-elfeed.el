@@ -6,7 +6,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: 
 ;; Version: 0
-;; Last modified: 2025-05-22 Thu 22:06:21
+;; Last modified: 2025-05-22 Thu 22:38:22
 ;; Package-Requires: ((helm "3.9.6") (elfeed "3.4.2"))
 ;; Keywords: helm elfeed
 
@@ -182,6 +182,20 @@
   "List of pairs (STRING FUNCTIONSYMBOL), which represent the
 actions used in `helm-elfeed'.")
 
+(defun helm-elfeed-transformed-actions (actions candidate)
+  "Action transformer for the `helm-elfeed' source."
+  (cond
+   ;; If candidate is a generic query, do not show the edit action.
+   ((not (plist-get (car candidate) :url))
+    (helm-make-actions
+     "Show feed" #'helm-elfeed-show-feed-action
+     "Show complete feed" #'helm-elfeed-show-complete-feed-action
+     "Mark feed as read" #'helm-elfeed-mark-feed-as-read-action
+     "Update feed" #'helm-elfeed-update-feed-action
+     "Update all feeds" #'helm-elfeed-update-action))
+   ;; Default actions
+   (t actions)))
+
 (defun helm-elfeed-show-feed-action (candidate)
   "Update the Elfeed filter using the query of CANDIDATE."
   (let ((search-query (cl-loop
@@ -274,7 +288,10 @@ actions used in `helm-elfeed'.")
   (helm :sources (helm-build-sync-source "Feeds:"
                    :candidates #'helm-elfeed--make-candidates
                    :display-to-real nil ; Transform the selected candidate when passing it to action.
-                   :action helm-elfeed--actions)
+                   :action helm-elfeed--actions
+                   :action-transformer (lambda (actions candidate)
+                                         (helm-elfeed-transformed-actions actions
+                                                                          candidate)))
         :buffer "*helm-elfeed*"
         :truncate-lines helm-buffers-truncate-lines
         :input (or input "")
