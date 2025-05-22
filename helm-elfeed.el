@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: 
 ;; Version: 0
-;; Last modified: 2025-05-18 Sun 22:11:16
+;; Last modified: 2025-05-22 Thu 21:38:00
 ;; Package-Requires: ((helm "3.9.6") (elfeed "3.4.2"))
 ;; Keywords: helm elfeed
 
@@ -222,16 +222,19 @@ actions used in `helm-elfeed'.")
   (let ((feed-title (plist-get (car candidate) :title))
         (feed-url (plist-get (car candidate) :url))
         (search-query (plist-get (car candidate) :query))
-        (feed-file (when (boundp 'rmh-elfeed-org-files)
-                     (car rmh-elfeed-org-files))))
-    (if feed-file
-        (progn 
-          (find-file feed-file)
-          ;; Inside Org file
-          (goto-char (point-min))
-          (org-fold-show-all)
-          (search-forward feed-url)
-          (beginning-of-line))
+        (feed-files (when (boundp 'rmh-elfeed-org-files)
+                      rmh-elfeed-org-files)))
+    (if feed-files
+        (cl-loop
+         for feed-file in feed-files
+         do (progn 
+              (find-file feed-file)
+              ;; Inside Org file
+              (goto-char (point-min))
+              (org-fold-show-all)
+              (when (search-forward feed-url)
+                (beginning-of-line)
+                (cl-return))))
       (message "elfeed-helm: Could not edit feed due to missing `rmh-elfeed-org-files'.")
       )))
 
