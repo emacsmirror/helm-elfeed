@@ -1,3 +1,4 @@
+
 ;;; helm-elfeed.el --- Helm interface for Elfeed   -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2025 Timm Lichte
@@ -5,7 +6,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: 
 ;; Version: 0
-;; Last modified: 2025-05-22 Thu 21:38:00
+;; Last modified: 2025-05-22 Thu 22:06:21
 ;; Package-Requires: ((helm "3.9.6") (elfeed "3.4.2"))
 ;; Keywords: helm elfeed
 
@@ -37,6 +38,13 @@
 (require 'helm)
 (require 'elfeed)
 
+
+;;====================
+;;
+;; Customization
+;;
+;;--------------------
+
 (defgroup helm-elfeed nil
   "Helm interface for Elfeed."
   :group 'helm)
@@ -63,6 +71,13 @@
   '((t :inherit font-lock-comment-face))
   "Font face for the tags of an entity."
   :group 'helm-elfeed)
+
+
+;;====================
+;;
+;; Candidates
+;;
+;;--------------------
 
 (defun he--trim-or-fill (field-value column-length)
   "Trim or fill a FIELD-VALUE to a specified COLUMN-LENGTH."
@@ -147,6 +162,13 @@
    if (string= url feed-url)
    return feed-tags
    ))
+
+
+;;====================
+;;
+;; Actions
+;;
+;;--------------------
 
 (defvar helm-elfeed--actions
   (helm-make-actions
@@ -238,6 +260,13 @@ actions used in `helm-elfeed'.")
       (message "elfeed-helm: Could not edit feed due to missing `rmh-elfeed-org-files'.")
       )))
 
+
+;;====================
+;;
+;; Main
+;;
+;;--------------------
+
 ;;;###autoload
 (defun helm-elfeed (&optional input)
   "Switch between Elfeed feeds with Helm."
@@ -250,6 +279,7 @@ actions used in `helm-elfeed'.")
         :truncate-lines helm-buffers-truncate-lines
         :input (or input "")
         ))
+
 
 (provide 'helm-elfeed)
 
