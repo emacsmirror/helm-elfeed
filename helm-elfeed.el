@@ -6,7 +6,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: 
 ;; Version: 0
-;; Last modified: 2025-05-22 Thu 22:38:22
+;; Last modified: 2025-05-23 Fri 09:38:29
 ;; Package-Requires: ((helm "3.9.6") (elfeed "3.4.2"))
 ;; Keywords: helm elfeed
 
@@ -191,7 +191,6 @@ actions used in `helm-elfeed'.")
      "Show feed" #'helm-elfeed-show-feed-action
      "Show complete feed" #'helm-elfeed-show-complete-feed-action
      "Mark feed as read" #'helm-elfeed-mark-feed-as-read-action
-     "Update feed" #'helm-elfeed-update-feed-action
      "Update all feeds" #'helm-elfeed-update-action))
    ;; Default actions
    (t actions)))
