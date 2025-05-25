@@ -1,0 +1,66 @@
+#+TITLE: helm-elfeed: A Helm interface for Elfeed
+#+AUTHOR: Timm Lichte
+
+Manage your RSS feeds inside [[https://www.gnu.org/software/emacs/][Emacs]] with [[https://github.com/emacs-helm/helm][Helm]] and [[https://github.com/skeeto/elfeed][Elfeed]].
+
+This README uses [[https://orgmode.org/][Org mode]].
+
+** Features
+
+- List and select feeds with Helm's completion mechanisms and perform specific actions:
+      - Show
+      - Update
+      - Edit (requires [[https://github.com/remyhonig/elfeed-org][elfeed-org]])
+- Other than your feeds, predefined generic search queries are available:
+      - All
+      - Marked/starred
+      - Unread
+
+** Installation
+
+*** Dependencies
+
+- Helm
+- Elfeed
+- [[https://github.com/remyhonig/elfeed-org][elfeed-org]] (optional, for editing feeds)
+
+*** Installation with Melpa
+
+Not yet available.
+
+*** Installation from Github
+
+Download =helm-elfeed.el= to your =.emacs.d= folder and add the following code to your init file:
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-elfeed
+  :after elfeed
+  :load-path "relative/path/to/helm-elfeed.el")
+  :config
+	(define-key elfeed-search-mode-map (kbd "C-i") 'helm-elfeed) ; Optional
+)
+#+END_SRC
+
+Optionally, you can also download the tests directory.
+
+** Usage
+
+Simple as that: 
+
+=M-x helm-elfeed=
+
+** Configuration
+
+Certain helm-elfeed variables are customizable, see =(customize-group "helm-elfeed")=. 
+
+The following are probably the most relevant ones: 
+
+- =helm-elfeed-generic-search-queries=: list of string pairs =(NAME . QUERY)=, for example, =("All" . "@6-months-ago")=.
+
+** Ideas & plans
+
+As for my own needs, helm-elfeed is currently feature-complete.  
+
+** Alternative and related Emacs packages
+
+- [[https://github.com/SqrtMinusOne/elfeed-summary][elfeed-summary]]: tree-based feed summary interface for elfeed. I had used this before the development of helm-elfeed. 
