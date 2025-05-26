@@ -37,7 +37,7 @@ Download =helm-elfeed.el= to your =.emacs.d= folder and add the following code t
   :after elfeed
   :load-path "relative/path/to/helm-elfeed.el")
   :config
-	(define-key elfeed-search-mode-map (kbd "C-i") 'helm-elfeed) ; Optional
+  (define-key elfeed-search-mode-map (kbd "C-i") 'helm-elfeed) ; Optional
 )
 #+END_SRC
 
