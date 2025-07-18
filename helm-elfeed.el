@@ -6,7 +6,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: 
 ;; Version: 0
-;; Last modified: 2025-05-23 Fri 09:38:29
+;; Last modified: 2025-07-18 Fri 11:27:01
 ;; Package-Requires: ((helm "3.9.6") (elfeed "3.4.2"))
 ;; Keywords: helm elfeed
 
@@ -50,11 +50,11 @@
   :group 'helm)
 
 (defcustom helm-elfeed-generic-search-queries
-	'(("All" . "@6-months-ago")
-		("Marked/starred" . "+star")
-		("Unread" . "@6-months-ago +unread"))
-	"Generic search queries used in `helm-elfeed', represented as a list of pairs (NAME . QUERY)."
-	:type '(cons string sting)
+  '(("All" . "@6-months-ago")
+    ("Marked/starred" . "+star")
+    ("Unread" . "@6-months-ago +unread"))
+  "Generic search queries used in `helm-elfeed', represented as a list of pairs (NAME . QUERY)."
+  :type '(cons string sting)
   :group 'helm-elfeed)
 
 (defface helm-elfeed-unread-face
@@ -88,42 +88,42 @@
     (string-pad field-value column-length)))
 
 (defun helm-elfeed--make-candidates ()
-	"Make candidates for `helm-elfeed'.  A candidate is a pair (STRING PLIST)."
-	(let ((unread-feeds (helm-elfeed--get-unread-feeds))
-				(all-feeds (reverse (elfeed-feed-list)))
-				(tags-width (let ((max-length 0))
-											(dolist (feed elfeed-feeds max-length)
-												(let* ((tags (cdr feed))
+  "Make candidates for `helm-elfeed'.  A candidate is a pair (STRING PLIST)."
+  (let ((unread-feeds (helm-elfeed--get-unread-feeds))
+        (all-feeds (reverse (elfeed-feed-list)))
+        (tags-width (let ((max-length 0))
+                      (dolist (feed elfeed-feeds max-length)
+                        (let* ((tags (cdr feed))
                                (tags-str (format "(%s) "
                                                  (string-join (mapcar 'symbol-name tags) ", ")))
                                (tags-length (length tags-str)))
-													(setq max-length (max max-length tags-length))))))
-				(generic-searches (cl-loop
+                          (setq max-length (max max-length tags-length))))))
+        (generic-searches (cl-loop
                            for generic-search in helm-elfeed-generic-search-queries
                            for search-format = (car generic-search)
                            for search-query = (cdr generic-search)
                            collect `(,search-format
                                      .
                                      ,(list `(:url nil :query ,search-query))))))
-		(seq-concatenate
+    (seq-concatenate
      'list generic-searches
      (cl-loop
-			for feed-url in (seq-union unread-feeds all-feeds)
-			for feed-tags = (helm-elfeed--get-feed-tags feed-url)
-			for feed-object = (elfeed-db-get-feed feed-url)
-			for feed-title = (or (elfeed-meta feed-object :title) (elfeed-feed-title feed-object))
-			for feed-url-format = (propertize
+      for feed-url in (seq-union unread-feeds all-feeds)
+      for feed-tags = (helm-elfeed--get-feed-tags feed-url)
+      for feed-object = (elfeed-db-get-feed feed-url)
+      for feed-title = (or (elfeed-meta feed-object :title) (elfeed-feed-title feed-object))
+      for feed-url-format = (propertize
                              (he--trim-or-fill (format "(%s)" feed-url)
                                                (max 2
-																										(- (window-width)
+                                                    (- (window-width)
                                                        (length feed-title)
                                                        tags-width)))
                              'face 'helm-elfeed-url-face)
-			for feed-tags-format = (propertize
-															(format "(%s)"
-																			(string-join (mapcar 'symbol-name feed-tags) ","))
-															'face 'helm-elfeed-tags-face)
-			for feed-format = (concat
+      for feed-tags-format = (propertize
+                              (format "(%s)"
+                                      (string-join (mapcar 'symbol-name feed-tags) ","))
+                              'face 'helm-elfeed-tags-face)
+      for feed-format = (concat
                          (if (member feed-url unread-feeds)
                              (propertize feed-title
                                          'face 'helm-elfeed-unread-face)
@@ -131,17 +131,17 @@
                          " " feed-url-format
                          " " feed-tags-format
                          )
-			for feed-plist = `(:title ,feed-title
+      for feed-plist = `(:title ,feed-title
                                 :url ,feed-url
-												        :query ,(concat
+                                :query ,(concat
                                          "=" (replace-regexp-in-string "\\([?+]\\)" "\\\\\\1"
                                                                        feed-url)
                                          (when (member feed-url unread-feeds) " +unread")))
-			if feed-title
-			collect `(,feed-format
-								.
-								,(list feed-plist)) 
-			))))
+      if feed-title
+      collect `(,feed-format
+                .
+                ,(list feed-plist)) 
+      ))))
 
 (defun helm-elfeed--get-unread-feeds ()
   "Return unread feeds in `elfeed-db' as a list of feed URLs."
