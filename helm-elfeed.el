@@ -6,7 +6,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: 
 ;; Version: 0
-;; Last modified: 2025-07-18 Fri 11:27:01
+;; Last modified: 2025-10-01 Wed 15:59:53
 ;; Package-Requires: ((helm "3.9.6") (elfeed "3.4.2"))
 ;; Keywords: helm elfeed
 
@@ -36,6 +36,7 @@
 ;;; Code:
 
 (require 'helm)
+(require 'helm-buffers)
 (require 'elfeed)
 
 
