@@ -1,35 +1,14 @@
-
 ;;; helm-elfeed.el --- Helm interface for Elfeed   -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2025 Timm Lichte
 
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
-;; URL: 
-;; Version: 0
-;; Last modified: 2025-10-01 Wed 15:59:53
-;; Package-Requires: ((helm "3.9.6") (elfeed "3.4.2"))
-;; Keywords: helm elfeed
+;; URL: https://codeberg.org/timmli/helm-elfeed
+;; Version: 1.0
+;; Last modified: 2025-10-11 Sat 21:50:37
+;; Package-Requires: ((emacs "29.1") (helm "3.9.6") (elfeed "3.4.2"))
+;; Keywords: matching
 
-;; Permission is hereby granted, free of charge, to any person
-;; obtaining a copy of this software and associated documentation
-;; files (the "Software"), to deal in the Software without
-;; restriction, including without limitation the rights to use,
-;; copy, modify, merge, publish, distribute, sublicense, and/or sell
-;; copies of the Software, and to permit persons to whom the
-;; Software is furnished to do so, subject to the following
-;; conditions:
-
-;; The above copyright notice and this permission notice shall be
-;; included in all copies or substantial portions of the Software.
-
-;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-;; EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-;; OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-;; NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-;; HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-;; WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-;; FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-;; OTHER DEALINGS IN THE SOFTWARE.
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or
@@ -44,6 +23,13 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+
+;; Manage your RSS feeds inside Emacs with Helm and Elfeed.  List and
+;; select feeds with Helm's completion mechanisms and perform specific
+;; actions:
+;; - Show
+;; - Update
+;; - Edit (requires elfeed-org)
 
 ;;; Code:
 
@@ -92,7 +78,7 @@
 ;;
 ;;--------------------
 
-(defun he--trim-or-fill (field-value column-length)
+(defun helm-elfeed--trim-or-fill (field-value column-length)
   "Trim or fill a FIELD-VALUE to a specified COLUMN-LENGTH."
   (if (> (length field-value) (- column-length 2))
       (concat (truncate-string-to-width field-value
@@ -126,11 +112,11 @@
       for feed-object = (elfeed-db-get-feed feed-url)
       for feed-title = (or (elfeed-meta feed-object :title) (elfeed-feed-title feed-object))
       for feed-url-format = (propertize
-                             (he--trim-or-fill (format "(%s)" feed-url)
-                                               (max 2
-                                                    (- (window-width)
-                                                       (length feed-title)
-                                                       tags-width)))
+                             (helm-elfeed--trim-or-fill (format "(%s)" feed-url)
+                                                        (max 2
+                                                             (- (window-width)
+                                                                (length feed-title)
+                                                                tags-width)))
                              'face 'helm-elfeed-url-face)
       for feed-tags-format = (propertize
                               (format "(%s)"
@@ -142,8 +128,7 @@
                                          'face 'helm-elfeed-unread-face)
                            feed-title)
                          " " feed-url-format
-                         " " feed-tags-format
-                         )
+                         " " feed-tags-format)
       for feed-plist = `(:title ,feed-title
                                 :url ,feed-url
                                 :query ,(concat
@@ -153,8 +138,7 @@
       if feed-title
       collect `(,feed-format
                 .
-                ,(list feed-plist)) 
-      ))))
+                ,(list feed-plist))))))
 
 (defun helm-elfeed--get-unread-feeds ()
   "Return unread feeds in `elfeed-db' as a list of feed URLs."
@@ -173,8 +157,7 @@
    for feed-url = (car feed)
    for feed-tags = (cdr feed)
    if (string= url feed-url)
-   return feed-tags
-   ))
+   return feed-tags))
 
 
 ;;====================
@@ -190,8 +173,7 @@
    "Mark feed as read" #'helm-elfeed-mark-feed-as-read-action
    "Update feed" #'helm-elfeed-update-feed-action
    "Update all feeds" #'helm-elfeed-update-action
-   "Edit feed" #'helm-elfeed-edit-action
-   )
+   "Edit feed" #'helm-elfeed-edit-action)
   "List of pairs (STRING FUNCTIONSYMBOL), which represent the
 actions used in `helm-elfeed'.")
 
@@ -214,8 +196,7 @@ actions used in `helm-elfeed'.")
                        for candidate in (helm-marked-candidates)
                        collect (plist-get (car candidate) :query)
                        into collected-strings
-                       finally (return (string-join collected-strings " "))
-                       )))
+                       finally (return (string-join collected-strings " ")))))
     (elfeed-search-set-filter search-query)
     (switch-to-buffer "*elfeed-search*")))
 
@@ -228,8 +209,7 @@ actions used in `helm-elfeed'.")
                        finally (return (replace-regexp-in-string
                                         "+unread"
                                         ""
-                                        (string-join collected-strings " ")))
-                       )))
+                                        (string-join collected-strings " "))))))
     (elfeed-search-set-filter search-query)
     (switch-to-buffer "*elfeed-search*")))
 
@@ -240,8 +220,7 @@ actions used in `helm-elfeed'.")
                        for candidate in (helm-marked-candidates)
                        collect (plist-get (car candidate) :query)
                        into collected-strings
-                       finally (return (string-join collected-strings " "))
-                       )))
+                       finally (return (string-join collected-strings " ")))))
     (elfeed-search-set-filter search-query)
     (switch-to-buffer "*elfeed-search*")
     (mark-whole-buffer)
@@ -283,8 +262,7 @@ actions used in `helm-elfeed'.")
               (when (search-forward feed-url)
                 (beginning-of-line)
                 (cl-return))))
-      (message "elfeed-helm: Could not edit feed due to missing `rmh-elfeed-org-files'.")
-      )))
+      (message "elfeed-helm: Could not edit feed due to missing `rmh-elfeed-org-files'."))))
 
 
 ;;====================
@@ -306,8 +284,7 @@ actions used in `helm-elfeed'.")
                                                                           candidate)))
         :buffer "*helm-elfeed*"
         :truncate-lines helm-buffers-truncate-lines
-        :input (or input "")
-        ))
+        :input (or input "")))
 
 
 (provide 'helm-elfeed)
