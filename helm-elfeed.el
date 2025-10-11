@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://codeberg.org/timmli/helm-elfeed
 ;; Version: 1.0
-;; Last modified: 2025-10-11 Sat 21:50:37
+;; Last modified: 2025-10-11 Sat 22:12:14
 ;; Package-Requires: ((emacs "29.1") (helm "3.9.6") (elfeed "3.4.2"))
 ;; Keywords: matching
 
@@ -174,11 +174,10 @@
    "Update feed" #'helm-elfeed-update-feed-action
    "Update all feeds" #'helm-elfeed-update-action
    "Edit feed" #'helm-elfeed-edit-action)
-  "List of pairs (STRING FUNCTIONSYMBOL), which represent the
-actions used in `helm-elfeed'.")
+  "List of pairs (STRING FUNCTIONSYMBOL), which represent the actions used in `helm-elfeed'.")
 
 (defun helm-elfeed-transformed-actions (actions candidate)
-  "Action transformer for the `helm-elfeed' source."
+  "Transform ACTIONS for a CANDIDATE of the `helm-elfeed' source."
   (cond
    ;; If candidate is a generic query, do not show the edit action.
    ((not (plist-get (car candidate) :url))
@@ -228,7 +227,7 @@ actions used in `helm-elfeed'.")
     (helm-elfeed input)))
 
 (defun helm-elfeed-update-feed-action (candidate)
-  "Update Elfeed database."
+  "Update Elfeed database for CANDIDATE feed."
   (let ((feed-url (plist-get (car candidate) :url))
         (search-query (plist-get (car candidate) :query))
         (input helm-input))
@@ -238,14 +237,14 @@ actions used in `helm-elfeed'.")
         (elfeed-update-feed feed-url)
       (elfeed-update))))
 
-(defun helm-elfeed-update-action (candidate)
+(defun helm-elfeed-update-action (_)
   "Update Elfeed database."
   (elfeed-search-set-filter "@6-months-ago")
   (switch-to-buffer "*elfeed-search*")
   (elfeed-update))
 
 (defun helm-elfeed-edit-action (candidate)
-  "Edit feed in Elfeed database."
+  "Edit feed of CANDIDATE in Elfeed database."
   (let ((feed-title (plist-get (car candidate) :title))
         (feed-url (plist-get (car candidate) :url))
         (search-query (plist-get (car candidate) :query))
@@ -254,7 +253,7 @@ actions used in `helm-elfeed'.")
     (if feed-files
         (cl-loop
          for feed-file in feed-files
-         do (progn 
+         do (progn
               (find-file feed-file)
               ;; Inside Org file
               (goto-char (point-min))
@@ -273,7 +272,7 @@ actions used in `helm-elfeed'.")
 
 ;;;###autoload
 (defun helm-elfeed (&optional input)
-  "Switch between Elfeed feeds with Helm."
+  "Switch between Elfeed feeds with Helm and optionally keep the INPUT."
   (interactive)
   (helm :sources (helm-build-sync-source "Feeds:"
                    :candidates #'helm-elfeed--make-candidates
