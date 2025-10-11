@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://codeberg.org/timmli/helm-elfeed
 ;; Version: 1.0
-;; Last modified: 2025-10-11 Sat 22:12:14
+;; Last modified: 2025-10-11 Sat 22:42:45
 ;; Package-Requires: ((emacs "29.1") (helm "3.9.6") (elfeed "3.4.2"))
 ;; Keywords: matching
 
@@ -52,7 +52,8 @@
   '(("All" . "@6-months-ago")
     ("Marked/starred" . "+star")
     ("Unread" . "@6-months-ago +unread"))
-  "Generic search queries used in `helm-elfeed', represented as a list of pairs (NAME . QUERY)."
+  "List of pairs (NAME . QUERY).
+They represent generic search queries used in `helm-elfeed'."
   :type '(cons string sting)
   :group 'helm-elfeed)
 
@@ -174,7 +175,8 @@
    "Update feed" #'helm-elfeed-update-feed-action
    "Update all feeds" #'helm-elfeed-update-action
    "Edit feed" #'helm-elfeed-edit-action)
-  "List of pairs (STRING FUNCTIONSYMBOL), which represent the actions used in `helm-elfeed'.")
+  "List of pairs (STRING FUNCTIONSYMBOL).
+They represent the actions used in `helm-elfeed'.")
 
 (defun helm-elfeed-transformed-actions (actions candidate)
   "Transform ACTIONS for a CANDIDATE of the `helm-elfeed' source."
@@ -189,8 +191,8 @@
    ;; Default actions
    (t actions)))
 
-(defun helm-elfeed-show-feed-action (candidate)
-  "Update the Elfeed filter using the query of CANDIDATE."
+(defun helm-elfeed-show-feed-action (_)
+  "Update the Elfeed filter showing only the feeds of marked candidates."
   (let ((search-query (cl-loop
                        for candidate in (helm-marked-candidates)
                        collect (plist-get (car candidate) :query)
@@ -199,8 +201,8 @@
     (elfeed-search-set-filter search-query)
     (switch-to-buffer "*elfeed-search*")))
 
-(defun helm-elfeed-show-complete-feed-action (candidate)
-  "Update the Elfeed filter using the query of CANDIDATE."
+(defun helm-elfeed-show-complete-feed-action (_)
+  "Update the Elfeed filter showing only the complete feeds of marked candidates."
   (let ((search-query (cl-loop
                        for candidate in (helm-marked-candidates)
                        collect (plist-get (car candidate) :query)
@@ -212,8 +214,8 @@
     (elfeed-search-set-filter search-query)
     (switch-to-buffer "*elfeed-search*")))
 
-(defun helm-elfeed-mark-feed-as-read-action (candidate)
-  "Update the Elfeed search using the query of CANDIDATE."
+(defun helm-elfeed-mark-feed-as-read-action (_)
+  "Update the Elfeed search marking the feeds as read."
   (let ((input helm-input)
         (search-query (cl-loop
                        for candidate in (helm-marked-candidates)
@@ -222,15 +224,14 @@
                        finally (return (string-join collected-strings " ")))))
     (elfeed-search-set-filter search-query)
     (switch-to-buffer "*elfeed-search*")
-    (mark-whole-buffer)
+    (call-interactively 'mark-whole-buffer)
     (elfeed-search-untag-all-unread)
     (helm-elfeed input)))
 
 (defun helm-elfeed-update-feed-action (candidate)
   "Update Elfeed database for CANDIDATE feed."
   (let ((feed-url (plist-get (car candidate) :url))
-        (search-query (plist-get (car candidate) :query))
-        (input helm-input))
+        (search-query (plist-get (car candidate) :query)))
     (elfeed-search-set-filter search-query)
     (switch-to-buffer "*elfeed-search*")
     (if feed-url
@@ -245,11 +246,12 @@
 
 (defun helm-elfeed-edit-action (candidate)
   "Edit feed of CANDIDATE in Elfeed database."
-  (let ((feed-title (plist-get (car candidate) :title))
-        (feed-url (plist-get (car candidate) :url))
-        (search-query (plist-get (car candidate) :query))
+  (let ((feed-url (plist-get (car candidate) :url))
         (feed-files (when (boundp 'rmh-elfeed-org-files)
-                      rmh-elfeed-org-files)))
+                      rmh-elfeed-org-files))
+        ;; (feed-title (plist-get (car candidate) :title))
+        ;; (search-query (plist-get (car candidate) :query))
+        )
     (if feed-files
         (cl-loop
          for feed-file in feed-files
