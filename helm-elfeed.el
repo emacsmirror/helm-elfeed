@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://codeberg.org/timmli/helm-elfeed
 ;; Version: 1.0
-;; Last modified: 2025-10-11 Sat 22:42:45
+;; Last modified: 2025-10-12 Sun 16:48:47
 ;; Package-Requires: ((emacs "29.1") (helm "3.9.6") (elfeed "3.4.2"))
 ;; Keywords: matching
 
@@ -169,7 +169,7 @@ They represent generic search queries used in `helm-elfeed'."
 
 (defvar helm-elfeed--actions
   (helm-make-actions
-   "Show feed" #'helm-elfeed-show-feed-action
+   "Show unread feed" #'helm-elfeed-show-feed-action
    "Show complete feed" #'helm-elfeed-show-complete-feed-action
    "Mark feed as read" #'helm-elfeed-mark-feed-as-read-action
    "Update feed" #'helm-elfeed-update-feed-action
@@ -184,7 +184,7 @@ They represent the actions used in `helm-elfeed'.")
    ;; If candidate is a generic query, do not show the edit action.
    ((not (plist-get (car candidate) :url))
     (helm-make-actions
-     "Show feed" #'helm-elfeed-show-feed-action
+     "Show unread feed" #'helm-elfeed-show-feed-action
      "Show complete feed" #'helm-elfeed-show-complete-feed-action
      "Mark feed as read" #'helm-elfeed-mark-feed-as-read-action
      "Update all feeds" #'helm-elfeed-update-action))
