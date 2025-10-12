@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://codeberg.org/timmli/helm-elfeed
 ;; Version: 1.0
-;; Last modified: 2025-10-12 Sun 22:19:46
+;; Last modified: 2025-10-12 Sun 22:27:40
 ;; Package-Requires: ((emacs "29.1") (helm "3.9.6") (elfeed "3.4.2"))
 ;; Keywords: matching
 
@@ -96,7 +96,7 @@ They represent generic search queries used in `helm-elfeed'."
                       (dolist (feed elfeed-feeds max-length)
                         (let* ((tags (cdr feed))
                                (tags-str (format "(%s) "
-                                                 (string-join (mapcar 'symbol-name tags) ", ")))
+                                                 (string-join (mapcar #'symbol-name tags) ", ")))
                                (tags-length (length tags-str)))
                           (setq max-length (max max-length tags-length))))))
         (generic-searches (cl-loop
@@ -122,7 +122,7 @@ They represent generic search queries used in `helm-elfeed'."
                              'face 'helm-elfeed-url-face)
       for feed-tags-format = (propertize
                               (format "(%s)"
-                                      (string-join (mapcar 'symbol-name feed-tags) ","))
+                                      (string-join (mapcar #'symbol-name feed-tags) ","))
                               'face 'helm-elfeed-tags-face)
       for feed-format = (concat
                          (if (member feed-url unread-feeds)
@@ -225,7 +225,7 @@ They represent the actions used in `helm-elfeed'.")
                        finally (return (string-join collected-strings " ")))))
     (elfeed-search-set-filter search-query)
     (switch-to-buffer "*elfeed-search*")
-    (call-interactively 'mark-whole-buffer)
+    (call-interactively #'mark-whole-buffer)
     (elfeed-search-untag-all-unread)
     (helm-elfeed input)))
 
