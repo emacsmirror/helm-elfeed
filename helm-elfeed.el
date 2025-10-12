@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://codeberg.org/timmli/helm-elfeed
 ;; Version: 1.0
-;; Last modified: 2025-10-12 Sun 16:48:47
+;; Last modified: 2025-10-12 Sun 22:19:46
 ;; Package-Requires: ((emacs "29.1") (helm "3.9.6") (elfeed "3.4.2"))
 ;; Keywords: matching
 
@@ -36,6 +36,7 @@
 (require 'helm)
 (require 'helm-buffers)
 (require 'elfeed)
+(require 'org-fold)
 
 
 ;;====================
