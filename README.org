@@ -30,7 +30,16 @@ This README uses [[https://orgmode.org/][Org mode]].
 
 *** Installation with Melpa
 
-Not yet available.
+Assuming [[https://github.com/jwiegley/use-package][use-package]], just add the following to your init file:
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-elfeed
+	:ensure t
+	:after elfeed
+	:config
+	(define-key elfeed-search-mode-map (kbd "C-i") 'helm-elfeed) ; Optional
+)
+#+END_SRC
 
 *** Installation from Github
 
