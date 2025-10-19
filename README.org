@@ -41,7 +41,7 @@ Assuming [[https://github.com/jwiegley/use-package][use-package]], just add the 
 )
 #+END_SRC
 
-*** Installation from Github
+*** Installation from Codeberg
 
 Download =helm-elfeed.el= to your =.emacs.d= folder and add the following code to your init file:
 
