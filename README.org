@@ -1,6 +1,8 @@
 #+TITLE: helm-elfeed: A Helm interface for Elfeed
 #+AUTHOR: Timm Lichte
 
+[[https://melpa.org/#/helm-elfeed][https://melpa.org/packages/helm-elfeed-badge.svg]]
+
 Manage your RSS feeds inside [[https://www.gnu.org/software/emacs/][Emacs]] with [[https://github.com/emacs-helm/helm][Helm]] and [[https://github.com/skeeto/elfeed][Elfeed]].
 
 [[file:screencast.gif]]
